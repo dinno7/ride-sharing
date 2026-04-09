@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:latest
 WORKDIR /app
 
 ADD shared shared
