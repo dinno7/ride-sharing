@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	infraHttp "github.com/dinno7/ride-sharing/services/trip-service/internal/infrastructure/http"
+	"github.com/dinno7/ride-sharing/services/trip-service/internal/infrastructure/osrm"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/infrastructure/repository/inmem"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/service"
 	"github.com/dinno7/ride-sharing/shared/env"
@@ -16,7 +17,8 @@ func main() {
 	log.Println("Starting Trip Service")
 
 	tripRepo := inmem.NewInMemTripRepository()
-	tripService := service.NewTripService(tripRepo)
+	osrmRouteCalculator := osrm.NewRouteCalculator()
+	tripService := service.NewTripService(tripRepo, osrmRouteCalculator)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -24,7 +26,7 @@ func main() {
 	})
 
 	tripHandler := infraHttp.NewTripHttpHandler(tripService)
-	http.HandleFunc("POST /preview", tripHandler.CreateTrip)
+	http.HandleFunc("POST /preview", tripHandler.PreviewTrip)
 
 	http.ListenAndServe(httpAddr, nil)
 }
