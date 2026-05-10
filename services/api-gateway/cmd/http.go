@@ -7,18 +7,14 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/dinno7/ride-sharing/shared/types"
 	"github.com/labstack/echo/v5"
 )
 
-type Coordinate struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-}
-
 type HTTPTripPreviewRequestPayload struct {
-	UserID      string     `json:"userID"      validate:"required"`
-	Pickup      Coordinate `json:"pickup"      validate:"required"`
-	Destination Coordinate `json:"destination" validate:"required"`
+	UserID      string           `json:"userID"      validate:"required"`
+	Pickup      types.Coordinate `json:"pickup"      validate:"required"`
+	Destination types.Coordinate `json:"destination" validate:"required"`
 }
 
 func tripPreview(c *echo.Context) error {
@@ -33,8 +29,11 @@ func tripPreview(c *echo.Context) error {
 	// TODO: Send to service
 	client := new(http.Client)
 	jsonToService, _ := json.Marshal(payload)
-	reader := bytes.NewReader(jsonToService)
-	req, err := http.NewRequest(http.MethodPost, "http://trip-service:7000/preview", reader)
+	req, err := http.NewRequest(
+		http.MethodPost,
+		"http://trip-service:7000/preview",
+		bytes.NewReader(jsonToService),
+	)
 	if err != nil {
 		c.Logger().Error("failed to create request to trup service", "error", err)
 		return echo.ErrInternalServerError.Wrap(
