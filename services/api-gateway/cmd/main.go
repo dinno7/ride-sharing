@@ -42,17 +42,4 @@ func main() {
 	if err := sc.Start(ctx, e); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}
-
-	// mux := http.NewServeMux()
-
-	// mux.HandleFunc("POST /trip/preview", tripPreview)
-	//
-	// server := &http.Server{
-	// 	Addr:    httpAddr,
-	// 	Handler: mux,
-	// }
-	//
-	// if err := server.ListenAndServe(); err != nil {
-	// 	log.Fatalf("failed to server api gateway, %v", err)
-	// }
 }
