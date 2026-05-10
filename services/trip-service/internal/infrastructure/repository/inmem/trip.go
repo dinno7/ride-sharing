@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/domain"
 )
 
@@ -13,7 +14,7 @@ type tripRepositoryInMem struct {
 	sync.RWMutex
 }
 
-func NewInMemTripRepository() domain.TripRepository {
+func NewInMemTripRepository() ports.TripRepository {
 	return &tripRepositoryInMem{
 		trips:     make(map[string]*domain.Trip),
 		rideFares: make(map[string]*domain.RideFare),

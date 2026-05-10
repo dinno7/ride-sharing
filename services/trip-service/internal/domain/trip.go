@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"context"
-
 	"github.com/dinno7/ride-sharing/shared/util"
 )
 
@@ -27,12 +25,4 @@ func NewTrip(userID string, status *tripStatus, fare *RideFare) *Trip {
 		Status:   status,
 		RideFare: fare,
 	}
-}
-
-type TripRepository interface {
-	CreateTrip(ctx context.Context, trip *Trip) (*Trip, error)
-}
-
-type TripService interface {
-	CreateTrip(ctx context.Context, fare *RideFare) (*Trip, error)
 }

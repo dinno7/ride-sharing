@@ -4,14 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/domain"
 )
 
 type tripService struct {
-	repo domain.TripRepository
+	repo ports.TripRepository
 }
 
-func NewTripService(repo domain.TripRepository) domain.TripService {
+func NewTripService(repo ports.TripRepository) ports.TripService {
 	return &tripService{repo: repo}
 }
 
