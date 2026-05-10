@@ -7,17 +7,17 @@ import (
 )
 
 type RideFare struct {
-	ID                string
-	UserID            string
-	PackageSlug       string // van, luxury, sedan
-	TotalPriceInCents float64
+	ID                string  `json:"id"`
+	UserID            string  `json:"user_id"`
+	PackageSlug       string  `json:"package_slug"` // van, luxury, sedan
+	TotalPriceInCents float64 `json:"total_price_in_cents"`
 }
 
 type Trip struct {
-	ID       string
-	UserID   string
-	Status   *tripStatus
-	RideFare *RideFare
+	ID       string      `json:"id"`
+	UserID   string      `json:"user_id"`
+	Status   *tripStatus `json:"status"`
+	RideFare *RideFare   `json:"ride_fare"`
 }
 
 func NewTrip(userID string, status *tripStatus, fare *RideFare) *Trip {
