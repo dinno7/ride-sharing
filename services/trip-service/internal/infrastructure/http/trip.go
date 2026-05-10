@@ -1,12 +1,11 @@
 package http
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
-	"github.com/dinno7/ride-sharing/services/trip-service/internal/domain"
+	"github.com/dinno7/ride-sharing/shared/types"
 	"github.com/dinno7/ride-sharing/shared/util"
 )
 
@@ -20,22 +19,21 @@ func NewTripHttpHandler(tripService ports.TripService) *TripHttpHandler {
 	}
 }
 
-func (h *TripHttpHandler) CreateTrip(w http.ResponseWriter, r *http.Request) {
+type TripPreviewResponse struct {
+	Route *types.Route `json:"route"`
+}
+
+func (h *TripHttpHandler) PreviewTrip(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	rare := domain.NewRideFare("", "luxuary", 1.0)
-	newTrip, err := h.tripService.CreateTrip(ctx, rare)
+	pickup := types.Coordinate{Latitude: 12.12, Longitude: 12.12}
+	destination := types.Coordinate{Latitude: 12.12, Longitude: 12.12}
+	tripPreviewRoute, err := h.tripService.PreviewTrip(ctx, &pickup, &destination)
 	if err != nil {
 		log.Fatalf("Err", err)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	newTripJSON, err := json.Marshal(newTrip)
-	if err != nil {
-		util.ErrorResponse(w, http.StatusInternalServerError, "Something went wrong")
-		return
-	}
-
-	// TODO: Publish Event
-	log.Printf("trip.created: %s", newTrip.ID)
-	w.Write(newTripJSON)
+	util.HttpOkResponse(w, "Proccess successfull",
+		&TripPreviewResponse{
+			Route: tripPreviewRoute,
+		})
 }
