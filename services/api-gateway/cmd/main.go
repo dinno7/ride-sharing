@@ -21,12 +21,7 @@ func main() {
 	e.Validator = echocustoms.NewEchoValidator()
 	e.HTTPErrorHandler = echocustoms.CustomHTTPErrorHandler
 	e.Use(middleware.BodyLimit(2_097_152)) // 2MB
-	// e.Use(middleware.CSRF())
 	e.Pre(middleware.RemoveTrailingSlash())
-
-	ctx := context.Background()
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
-	defer cancel()
 
 	sc := echo.StartConfig{
 		Address:         httpAddr,
@@ -37,8 +32,14 @@ func main() {
 		},
 	}
 
-	e.POST("/trip/preview", tripPreview)
+	e.POST("/trip/preview", handleTripPreview)
 
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+	)
+	defer cancel()
 	if err := sc.Start(ctx, e); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}

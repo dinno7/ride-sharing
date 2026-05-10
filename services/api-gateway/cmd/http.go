@@ -17,7 +17,7 @@ type HTTPTripPreviewRequestPayload struct {
 	Destination types.Coordinate `json:"destination" validate:"required"`
 }
 
-func tripPreview(c *echo.Context) error {
+func handleTripPreview(c *echo.Context) error {
 	payload := new(HTTPTripPreviewRequestPayload)
 	if err := c.Bind(payload); err != nil {
 		return err
