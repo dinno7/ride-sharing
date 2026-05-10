@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -22,15 +21,9 @@ func NewTripHttpHandler(tripService ports.TripService) *TripHttpHandler {
 }
 
 func (h *TripHttpHandler) CreateTrip(w http.ResponseWriter, r *http.Request) {
-	newTrip, err := h.tripService.CreateTrip(
-		context.Background(),
-		&domain.RideFare{
-			ID:                util.GenRandomID(),
-			UserID:            util.GenRandomID(),
-			PackageSlug:       "luxury",
-			TotalPriceInCents: 100.2,
-		},
-	)
+	ctx := r.Context()
+	rare := domain.NewRideFare("", "luxuary", 1.0)
+	newTrip, err := h.tripService.CreateTrip(ctx, rare)
 	if err != nil {
 		log.Fatalf("Err", err)
 		return

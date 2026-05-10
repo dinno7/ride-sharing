@@ -11,6 +11,15 @@ type RideFare struct {
 	TotalPriceInCents float64 `json:"total_price_in_cents"`
 }
 
+func NewRideFare(userID, packageSlug string, priceCents float64) *RideFare {
+	return &RideFare{
+		ID:                util.GenRandomID(),
+		UserID:            userID,
+		PackageSlug:       packageSlug,
+		TotalPriceInCents: priceCents,
+	}
+}
+
 type Trip struct {
 	ID       string      `json:"id"`
 	UserID   string      `json:"user_id"`
