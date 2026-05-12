@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package trip;
+
+option go_package = "shared/proto/trip;trip";
+
+
+service TripService {
+  rpc PreviewTrip(PreviewTripRequest) returns (PreviewTripResponse);
+}
+
+message PreviewTripRequest {
+  string userID = 1;
+  Cordinate startLocation = 2;
+  Cordinate endLocation = 3;
+}
+
+message PreviewTripResponse {
+  Route route = 2;
+  repeated   RideFare rideFare = 3;
+}
+
+message Route {
+  repeated  Geometry geometry = 1;
+  double distance = 2;
+  double duration = 3;
+}
+
+message RideFare {
+  string ID  = 1;
+  string userID = 2;
+  string packageSlug = 3;
+  double totalPriceInCents = 4;
+}
+
+message Geometry {
+  repeated Cordinate cordinates =1 ;
+}
+
+message Cordinate {
+  double latitude = 1;
+  double longitude = 2;
+}
