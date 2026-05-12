@@ -22,6 +22,8 @@ func main() {
 	e.HTTPErrorHandler = echocustoms.CustomHTTPErrorHandler
 	e.Use(middleware.BodyLimit(2_097_152)) // 2MB
 	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.CORS("*"))
+	e.Use(middleware.Recover())
 
 	sc := echo.StartConfig{
 		Address:         httpAddr,
@@ -32,6 +34,10 @@ func main() {
 		},
 	}
 
+	hub := NewHub()
+	go hub.Run()
+	e.GET("/ws/drivers", handleDriverWS(hub))
+	e.GET("/ws/riders", handleRiderWS(hub))
 	e.POST("/trip/preview", handleTripPreview)
 
 	ctx, cancel := signal.NotifyContext(
