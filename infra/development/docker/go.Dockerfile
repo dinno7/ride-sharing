@@ -16,6 +16,6 @@ COPY ./shared ./shared
 
 RUN  go mod tidy && go mod download;
 
-EXPOSE 4000
+EXPOSE 7000
 
 CMD ["./air", "--build.cmd", "go build -o ./bin/main ./services/$SERVICE_NAME/cmd"]
