@@ -39,6 +39,7 @@ func main() {
 	e.GET("/ws/drivers", handleDriverWS(hub))
 	e.GET("/ws/riders", handleRiderWS(hub))
 	e.POST("/trip/preview", handleTripPreview)
+	e.POST("/trip/start", handleTripStart)
 
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),

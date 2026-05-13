@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
+	"github.com/dinno7/ride-sharing/services/trip-service/internal/domain"
 	pb "github.com/dinno7/ride-sharing/shared/proto/trip"
 	"github.com/dinno7/ride-sharing/shared/types"
 	"google.golang.org/grpc"
@@ -47,5 +48,20 @@ func (h *tripGrpcHandler) PreviewTrip(
 	return &pb.PreviewTripResponse{
 		Route:    routes.ToGrpc(),
 		RideFare: []*pb.RideFare{},
+	}, nil
+}
+
+func (h *tripGrpcHandler) StartTrip(
+	ctx context.Context,
+	req *pb.StartTripRequest,
+) (*pb.StartTripResponse, error) {
+	fare := domain.NewRideFare(req.UserID, "", 12.0)
+	trip, err := h.tripService.CreateTrip(ctx, fare)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StartTripResponse{
+		TripID: trip.ID,
 	}, nil
 }

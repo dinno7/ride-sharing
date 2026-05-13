@@ -24,3 +24,25 @@ func (r *HTTPTripPreviewRequestPayload) ToGrpc() *pb.PreviewTripRequest {
 		},
 	}
 }
+
+type HTTPTripStartRequestPayload struct {
+	RideFareID string `json:"rideFareID" validate:"required"`
+	UserID     string `json:"userID"     validate:"required"`
+}
+
+func (r *HTTPTripStartRequestPayload) ToGrpc() *pb.StartTripRequest {
+	return &pb.StartTripRequest{
+		RideFareID: r.RideFareID,
+		UserID:     r.UserID,
+	}
+}
+
+type HTTPTripStartResponse struct {
+	TripID string `json:"tripID"`
+}
+
+func (r *HTTPTripStartRequestPayload) ToHttp(grpcRes *pb.StartTripResponse) *HTTPTripStartResponse {
+	return &HTTPTripStartResponse{
+		TripID: grpcRes.TripID,
+	}
+}
