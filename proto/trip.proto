@@ -18,7 +18,7 @@ message PreviewTripRequest {
 
 message PreviewTripResponse {
   Route route = 2;
-  repeated   RideFare rideFare = 3;
+  repeated   RideFare rideFares = 3;
 }
 
 message Route {
