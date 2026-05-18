@@ -32,3 +32,16 @@ func (repo *tripRepositoryInMem) CreateTrip(
 
 	return trip, nil
 }
+
+func (repo *tripRepositoryInMem) SaveRideFares(
+	ctx context.Context,
+	rideFares []*domain.RideFare,
+) ([]*domain.RideFare, error) {
+	repo.Lock()
+	defer repo.Unlock()
+	for _, rideFare := range rideFares {
+		repo.rideFares[rideFare.ID] = rideFare
+	}
+
+	return rideFares, nil
+}

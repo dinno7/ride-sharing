@@ -8,4 +8,8 @@ import (
 
 type TripRepository interface {
 	CreateTrip(ctx context.Context, trip *domain.Trip) (*domain.Trip, error)
+	SaveRideFares(
+		ctx context.Context,
+		estimatedPackagePrices []*domain.RideFare,
+	) ([]*domain.RideFare, error)
 }
