@@ -8,10 +8,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/service"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/infrastructure/grpc"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/infrastructure/osrm"
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/infrastructure/repository/inmem"
-	"github.com/dinno7/ride-sharing/services/trip-service/internal/service"
 	"github.com/dinno7/ride-sharing/shared/env"
 	googlegrpc "google.golang.org/grpc"
 )
