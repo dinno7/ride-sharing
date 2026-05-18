@@ -32,7 +32,8 @@ func (h *tripGrpcHandler) PreviewTrip(
 	pickup := req.GetStartLocation()
 	destination := req.GetEndLocation()
 	log.Println("Calling preview trip application service")
-	routes, err := h.tripService.PreviewTrip(ctx,
+	tripPreview, err := h.tripService.PreviewTrip(ctx,
+		req.GetUserID(),
 		&types.Coordinate{
 			Latitude:  pickup.Latitude,
 			Longitude: pickup.Longitude,
@@ -45,10 +46,7 @@ func (h *tripGrpcHandler) PreviewTrip(
 		return nil, err
 	}
 
-	return &pb.PreviewTripResponse{
-		Route:    routes.ToGrpc(),
-		RideFare: []*pb.RideFare{},
-	}, nil
+	return tripPreviewToGrpc(tripPreview), nil
 }
 
 func (h *tripGrpcHandler) StartTrip(

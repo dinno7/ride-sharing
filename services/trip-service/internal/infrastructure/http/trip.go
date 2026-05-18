@@ -27,13 +27,14 @@ func (h *TripHttpHandler) PreviewTrip(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	pickup := types.Coordinate{Latitude: 12.12, Longitude: 12.12}
 	destination := types.Coordinate{Latitude: 12.12, Longitude: 12.12}
-	tripPreviewRoute, err := h.tripService.PreviewTrip(ctx, &pickup, &destination)
+	userID := util.GenRandomID()
+	tripPreviewRoute, err := h.tripService.PreviewTrip(ctx, userID, &pickup, &destination)
 	if err != nil {
 		log.Fatalf("Err", err)
 		return
 	}
 	util.HttpOkResponse(w, "Proccess successfull",
 		&TripPreviewResponse{
-			Route: tripPreviewRoute,
+			Route: tripPreviewRoute.Route,
 		})
 }
