@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	grpcclients "github.com/dinno7/ride-sharing/services/api-gateway/cmd/grpc_clients"
@@ -36,12 +37,12 @@ func handleTripPreview(c *echo.Context) error {
 		payload.ToGrpc(),
 	)
 	c.Logger().Info("Closing connection")
-
-	if err := tripService.Close(); err == nil {
+	if closeErr := tripService.Close(); closeErr == nil {
 		c.Logger().Info("Connection closed")
 	}
+
 	if err != nil {
-		return status.Errorf(codes.Internal, "failed get trip preview from trip service: %v", err)
+		return fmt.Errorf("failed get trip preview from trip service: %w", err)
 	}
 	c.Logger().Info("Done")
 
@@ -75,7 +76,7 @@ func handleTripStart(c *echo.Context) error {
 		c.Logger().Info("Connection closed")
 	}
 	if err != nil {
-		return status.Errorf(codes.Internal, "failed start trip from trip service: %v", err)
+		return fmt.Errorf("failed start trip from trip service: %w", err)
 	}
 	c.Logger().Info("Done")
 
