@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	grpcclients "github.com/dinno7/ride-sharing/services/api-gateway/cmd/grpc_clients"
 	"github.com/dinno7/ride-sharing/shared/contracts"
-	"github.com/dinno7/ride-sharing/shared/util"
+	driverPb "github.com/dinno7/ride-sharing/shared/proto/driver"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v5"
 )
@@ -43,27 +44,36 @@ func handleDriverWS(hub *Hub) echo.HandlerFunc {
 			return websocket.ErrBadHandshake
 		}
 
+		ctx := c.Request().Context()
+
 		client := newDriverClient(ws)
 		hub.ClientOnline(client)
 		defer hub.ClientOffline(client)
 
-		type Driver struct {
-			ID             string `json:"id"`
-			Name           string `json:"name"`
-			ProfilePicture string `json:"profilePicture"`
-			CarPlate       string `json:"carPlate"`
-			PackageSlug    string `json:"packageSlug"`
+		driverService, err := grpcclients.NewDriverServiceClient()
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			driverService.Client.UnregisterDriver(
+				ctx,
+				&driverPb.DriverRequest{DriverID: payload.UserID, PackageSlug: payload.PackageSlug},
+			)
+			driverService.Close()
+		}()
+
+		driver, err := driverService.Client.RegisterDriver(
+			ctx,
+			&driverPb.DriverRequest{DriverID: payload.UserID, PackageSlug: payload.PackageSlug},
+		)
+		if err != nil {
+			return err
 		}
 
 		if err := client.conn.WriteJSON(contracts.WSMessage{
 			Type: "driver.cmd.register",
-			Data: Driver{
-				ID:             payload.UserID,
-				Name:           "Dinno",
-				ProfilePicture: util.GetRandomAvatar(1),
-				CarPlate:       "ABC1234",
-				PackageSlug:    payload.PackageSlug,
-			},
+			Data: driver.Driver,
 		}); err != nil {
 			return err
 		}
