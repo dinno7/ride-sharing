@@ -45,3 +45,17 @@ func (repo *tripRepositoryInMem) SaveRideFares(
 
 	return rideFares, nil
 }
+
+func (repo *tripRepositoryInMem) GetFareByID(
+	fareID string,
+) (*domain.RideFare, error) {
+	repo.RLock()
+	defer repo.RUnlock()
+
+	for id, fare := range repo.rideFares {
+		if id == fareID {
+			return fare, nil
+		}
+	}
+	return nil, domain.ErrFareNotFound
+}

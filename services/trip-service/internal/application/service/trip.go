@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
@@ -22,11 +23,18 @@ func NewTripService(
 	return &tripService{repo: repo, routeCalculator: routeCalculator}
 }
 
-func (s *tripService) CreateTrip(
-	ctx context.Context,
-	fare *domain.RideFare,
-) (*domain.Trip, error) {
-	trip := domain.NewTrip(fare.UserID, domain.TripStatusPending, fare)
+func (s *tripService) StartTrip(ctx context.Context, fareID, userID string) (*domain.Trip, error) {
+	// NOTE: Check trip fare & userid exists in db
+	fetchedFare, err := s.repo.GetFareByID(fareID)
+	if err != nil {
+		return nil, err
+	}
+	if fetchedFare.UserID != userID {
+		return nil, errors.New("fare not belongs you")
+	}
+
+	// NOTE: Create New trip
+	trip := domain.NewTrip(fetchedFare.UserID, domain.TripStatusPending, fetchedFare)
 	persistTrip, err := s.repo.CreateTrip(ctx, trip)
 	if err != nil {
 		return nil, fmt.Errorf("failed to %w", err)
@@ -43,9 +51,9 @@ func (s *tripService) PreviewTrip(
 	if err != nil {
 		return nil, fmt.Errorf("failed to %w", err)
 	}
-	// TODO: Estimate pkg price with route
+	// NOTE: Estimate pkg price with route
 	estimatedPrices := estimatePackagePrice(route)
-	// TODO: Generate & Save to DB Trip fare
+	// NOTE: Generate & Save to DB Trip fare
 	rideFares := make([]*domain.RideFare, len(estimatedPrices))
 	for i, rfp := range estimatedPrices {
 		rideFares[i] = &domain.RideFare{

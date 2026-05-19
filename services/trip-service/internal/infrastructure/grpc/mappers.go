@@ -37,12 +37,24 @@ func routeToGrpc(r *types.Route) *pb.Route {
 func rideFaresToGrpc(rideFares []*domain.RideFare) []*pb.RideFare {
 	out := make([]*pb.RideFare, len(rideFares))
 	for i, rf := range rideFares {
-		out[i] = &pb.RideFare{
-			ID:                rf.ID,
-			UserID:            rf.UserID,
-			PackageSlug:       rf.PackageSlug,
-			TotalPriceInCents: rf.TotalPriceInCents,
-		}
+		out[i] = rideFareToGrpc(rf)
 	}
 	return out
+}
+
+func rideFareToGrpc(rideFares *domain.RideFare) *pb.RideFare {
+	return &pb.RideFare{
+		ID:                rideFares.ID,
+		UserID:            rideFares.UserID,
+		PackageSlug:       rideFares.PackageSlug,
+		TotalPriceInCents: rideFares.TotalPriceInCents,
+	}
+}
+
+func tripToGrpc(domainTrip *domain.Trip) *pb.Trip {
+	return &pb.Trip{
+		ID: domainTrip.ID,
+		// SelectedRideFare: *pb.RideFare,
+		Route: *pb.Route,
+	}
 }

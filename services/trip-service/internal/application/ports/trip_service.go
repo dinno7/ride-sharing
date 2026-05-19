@@ -13,7 +13,7 @@ type PreviewTripOutput struct {
 }
 
 type TripService interface {
-	CreateTrip(ctx context.Context, fare *domain.RideFare) (*domain.Trip, error)
+	StartTrip(ctx context.Context, fareID, userID string) (*domain.Trip, error)
 	PreviewTrip(
 		ctx context.Context,
 		userID string,
