@@ -50,11 +50,3 @@ func rideFareToGrpc(rideFares *domain.RideFare) *pb.RideFare {
 		TotalPriceInCents: rideFares.TotalPriceInCents,
 	}
 }
-
-func tripToGrpc(domainTrip *domain.Trip) *pb.Trip {
-	return &pb.Trip{
-		ID: domainTrip.ID,
-		// SelectedRideFare: *pb.RideFare,
-		Route: *pb.Route,
-	}
-}
