@@ -42,6 +42,7 @@ func handleTripPreview(c *echo.Context) error {
 	}
 
 	if err != nil {
+		c.Logger().Error("failed to preview trip service", "error", err)
 		return fmt.Errorf("failed get trip preview from trip service: %w", err)
 	}
 	c.Logger().Info("Done")
