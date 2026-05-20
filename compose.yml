@@ -1,4 +1,18 @@
 services:
+  # rabbitmq:
+  #   image: "rabbitmq:3-management"
+  #   container_name: "rabbitmq"
+  #   hostname: "rabbitmq"
+  #   environment:
+  #     RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+  #     RABBITMQ_DEFAULT_USER: "guest"
+  #     RABBITMQ_DEFAULT_PASS: "guest"
+  #     RABBITMQ_DEFAULT_VHOST: "/"
+  #   ports:
+  #     - "15672:15672"
+  #     - "5672:5672"
+  #   labels:
+  #     NAME: "rabbitmq"
   api-gateway:
     container_name: api-gateway
     build:
@@ -8,6 +22,8 @@ services:
         - SERVICE_NAME=api-gateway
     ports:
       - 7000:7000
+    networks:
+      - internal
     volumes:
       - ./services/api-gateway/:/data/services/api-gateway/
       - ./shared/:/data/shared/
@@ -19,10 +35,36 @@ services:
       dockerfile: ./infra/development/docker/go.Dockerfile
       args:
         - SERVICE_NAME=trip-service
-    ports:
-      - 7001:7000
+    # ports:
+    #   - 7001:9000
+    # depends_on:
+    #   - rabbitmq
+    networks:
+      - rabbitmq
+      - internal
     volumes:
       - ./services/trip-service/:/data/services/trip-service/
+      - ./shared/:/data/shared/
+
+  driver-service:
+    # container_name: driver-service
+    # hostname: driver-service
+    build:
+      context: .
+      dockerfile: ./infra/development/docker/go.Dockerfile
+      args:
+        - SERVICE_NAME=driver-service
+    deploy:
+      replicas: 1
+    # ports:
+    #   - 7002:9000
+    # depends_on:
+    #   - rabbitmq
+    networks:
+      - rabbitmq
+      - internal
+    volumes:
+      - ./services/driver-service/:/data/services/driver-service/
       - ./shared/:/data/shared/
 
   web:
@@ -34,3 +76,18 @@ services:
       - api-gateway
     ports:
       - 3000:3000
+    networks:
+      - internal
+    environment:
+      # Used by the browser (Client-side)
+      - NEXT_PUBLIC_API_URL=http://localhost:7000
+      - NEXT_PUBLIC_WEBSOCKET_URL=ws://localhost:7000/ws
+      # Used by Next.js Server (Server-side fetching)
+      - INTERNAL_API_URL=http://api-gateway:7000
+
+networks:
+  internal:
+    name: internal
+    driver: bridge
+  rabbitmq:
+    external: true
