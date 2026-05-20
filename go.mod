@@ -48,7 +48,7 @@ require (
 require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/mmcloughlin/geohash v0.10.0
-	github.com/rabbitmq/amqp091-go v1.10.0
+	github.com/rabbitmq/amqp091-go v1.11.0
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.35.0 // indirect
