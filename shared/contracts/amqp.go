@@ -32,3 +32,8 @@ const (
 	// Payment commands (payment.cmd.*)
 	PaymentCmdCreateSession = "payment.cmd.create_session"
 )
+
+type TripCreatedEventData struct {
+	TripID      string `json:"trip_id"`
+	PackageSlug string `json:"package_slug"`
+}

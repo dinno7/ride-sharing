@@ -13,12 +13,18 @@ import (
 
 type tripGrpcHandler struct {
 	pb.UnimplementedTripServiceServer
-	tripService ports.TripService
+	tripService      ports.TripService
+	tripEventHandler ports.TripEventHandler
 }
 
-func NewTripGrpcHandler(server *grpc.Server, tripService ports.TripService) *tripGrpcHandler {
+func NewTripGrpcHandler(
+	server *grpc.Server,
+	tripService ports.TripService,
+	tripEventHandler ports.TripEventHandler,
+) *tripGrpcHandler {
 	handler := &tripGrpcHandler{
-		tripService: tripService,
+		tripService:      tripService,
+		tripEventHandler: tripEventHandler,
 	}
 	pb.RegisterTripServiceServer(server, handler)
 	return handler
@@ -58,6 +64,12 @@ func (h *tripGrpcHandler) StartTrip(
 	trip, err := h.tripService.StartTrip(ctx, fareID, userID)
 	if err != nil {
 		return nil, err
+	}
+
+	err = h.tripEventHandler.TripCreated(ctx, trip)
+	if err != nil {
+		log.Println(err)
+		// TODO: ...
 	}
 
 	return &pb.StartTripResponse{
