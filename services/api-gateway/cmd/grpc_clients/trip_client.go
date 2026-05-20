@@ -1,8 +1,7 @@
 package grpcclients
 
 import (
-	"os"
-
+	"github.com/dinno7/ride-sharing/shared/env"
 	pb "github.com/dinno7/ride-sharing/shared/proto/trip"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -14,10 +13,7 @@ type tripGrpcServiceClient struct {
 }
 
 func NewTripServiceClient() (*tripGrpcServiceClient, error) {
-	tripServiceURL := os.Getenv("TRIP_SERVICE_URL")
-	if tripServiceURL == "" {
-		tripServiceURL = "trip-service:9000"
-	}
+	tripServiceURL := env.GetString("TRIP_SERVICE_URL", "trip-service:9000")
 
 	conn, err := grpc.NewClient(
 		tripServiceURL,

@@ -1,8 +1,7 @@
 package grpcclients
 
 import (
-	"os"
-
+	"github.com/dinno7/ride-sharing/shared/env"
 	pb "github.com/dinno7/ride-sharing/shared/proto/driver"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -14,10 +13,7 @@ type driverGrpcServiceClient struct {
 }
 
 func NewDriverServiceClient() (*driverGrpcServiceClient, error) {
-	driverServiceURL := os.Getenv("DRIVER_SERVICE_URL")
-	if driverServiceURL == "" {
-		driverServiceURL = "driver-service:9000"
-	}
+	driverServiceURL := env.GetString("DRIVER_SERVICE_URL", "driver-service:9000")
 
 	conn, err := grpc.NewClient(
 		driverServiceURL,
