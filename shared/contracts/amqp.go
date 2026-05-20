@@ -6,6 +6,8 @@ type AmqpMessage struct {
 	Data    []byte `json:"data"`
 }
 
+const TripExchange = "trip_exchange"
+
 // Routing keys - using consistent event/command patterns
 const (
 	// Trip events (trip.event.*)
