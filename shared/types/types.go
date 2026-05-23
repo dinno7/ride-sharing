@@ -20,14 +20,14 @@ type Coordinate struct {
 func (r *Route) ToGrpc() *pb.Route {
 	geometry := []*pb.Geometry{}
 	for _, g := range r.Geometry {
-		cordinates := []*pb.Cordinate{}
+		coordinates := []*pb.Coordinate{}
 		for _, c := range g.Coordinates {
-			cordinates = append(cordinates, &pb.Cordinate{
+			coordinates = append(coordinates, &pb.Coordinate{
 				Latitude:  c.Latitude,
 				Longitude: c.Longitude,
 			})
 		}
-		newGeo := &pb.Geometry{Cordinates: cordinates}
+		newGeo := &pb.Geometry{Coordinates: coordinates}
 		geometry = append(geometry, newGeo)
 	}
 	return &pb.Route{

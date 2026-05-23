@@ -10,7 +10,7 @@ service DriverService {
 }
 
 message DriverRequest {
-  string driverID = 1;
+  string driverId = 1;
   string packageSlug = 2;
 }
 

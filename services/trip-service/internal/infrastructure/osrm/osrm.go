@@ -53,7 +53,7 @@ func (rc *osrmRouteCalculator) CalcRoutes(
 		return nil, errors.New("osrm's response code is not ok")
 	}
 
-	cordinates := []*types.Coordinate{}
+	coordinates := []*types.Coordinate{}
 	for _, g := range osrmRes.Routes[0].Geometry.Coordinates {
 		lng, lat := g[0], g[1]
 		if lng != 0 && lat != 0 {
@@ -61,7 +61,7 @@ func (rc *osrmRouteCalculator) CalcRoutes(
 				Longitude: lng,
 				Latitude:  lat,
 			}
-			cordinates = append(cordinates, &cordinate)
+			coordinates = append(coordinates, &cordinate)
 		}
 	}
 
@@ -69,7 +69,7 @@ func (rc *osrmRouteCalculator) CalcRoutes(
 		Distance: osrmRes.Routes[0].Distance,
 		Duration: osrmRes.Routes[0].Duration,
 		Geometry: []*types.Geometry{
-			{Coordinates: cordinates},
+			{Coordinates: coordinates},
 		},
 	}, nil
 }

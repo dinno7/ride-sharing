@@ -23,9 +23,9 @@ const (
 
 type PreviewTripRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserID        string                 `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
-	StartLocation *Cordinate             `protobuf:"bytes,2,opt,name=startLocation,proto3" json:"startLocation,omitempty"`
-	EndLocation   *Cordinate             `protobuf:"bytes,3,opt,name=endLocation,proto3" json:"endLocation,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	StartLocation *Coordinate            `protobuf:"bytes,2,opt,name=startLocation,proto3" json:"startLocation,omitempty"`
+	EndLocation   *Coordinate            `protobuf:"bytes,3,opt,name=endLocation,proto3" json:"endLocation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,21 +60,21 @@ func (*PreviewTripRequest) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PreviewTripRequest) GetUserID() string {
+func (x *PreviewTripRequest) GetUserId() string {
 	if x != nil {
-		return x.UserID
+		return x.UserId
 	}
 	return ""
 }
 
-func (x *PreviewTripRequest) GetStartLocation() *Cordinate {
+func (x *PreviewTripRequest) GetStartLocation() *Coordinate {
 	if x != nil {
 		return x.StartLocation
 	}
 	return nil
 }
 
-func (x *PreviewTripRequest) GetEndLocation() *Cordinate {
+func (x *PreviewTripRequest) GetEndLocation() *Coordinate {
 	if x != nil {
 		return x.EndLocation
 	}
@@ -195,8 +195,8 @@ func (x *Route) GetDuration() float64 {
 
 type RideFare struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	ID                string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	UserID            string                 `protobuf:"bytes,2,opt,name=userID,proto3" json:"userID,omitempty"`
+	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId            string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	PackageSlug       string                 `protobuf:"bytes,3,opt,name=packageSlug,proto3" json:"packageSlug,omitempty"`
 	TotalPriceInCents float64                `protobuf:"fixed64,4,opt,name=totalPriceInCents,proto3" json:"totalPriceInCents,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -233,16 +233,16 @@ func (*RideFare) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *RideFare) GetID() string {
+func (x *RideFare) GetId() string {
 	if x != nil {
-		return x.ID
+		return x.Id
 	}
 	return ""
 }
 
-func (x *RideFare) GetUserID() string {
+func (x *RideFare) GetUserId() string {
 	if x != nil {
-		return x.UserID
+		return x.UserId
 	}
 	return ""
 }
@@ -263,7 +263,7 @@ func (x *RideFare) GetTotalPriceInCents() float64 {
 
 type Geometry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cordinates    []*Cordinate           `protobuf:"bytes,1,rep,name=cordinates,proto3" json:"cordinates,omitempty"`
+	Coordinates   []*Coordinate          `protobuf:"bytes,1,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -298,14 +298,14 @@ func (*Geometry) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *Geometry) GetCordinates() []*Cordinate {
+func (x *Geometry) GetCoordinates() []*Coordinate {
 	if x != nil {
-		return x.Cordinates
+		return x.Coordinates
 	}
 	return nil
 }
 
-type Cordinate struct {
+type Coordinate struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Latitude      float64                `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude,omitempty"`
 	Longitude     float64                `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longitude,omitempty"`
@@ -313,20 +313,20 @@ type Cordinate struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Cordinate) Reset() {
-	*x = Cordinate{}
+func (x *Coordinate) Reset() {
+	*x = Coordinate{}
 	mi := &file_trip_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Cordinate) String() string {
+func (x *Coordinate) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Cordinate) ProtoMessage() {}
+func (*Coordinate) ProtoMessage() {}
 
-func (x *Cordinate) ProtoReflect() protoreflect.Message {
+func (x *Coordinate) ProtoReflect() protoreflect.Message {
 	mi := &file_trip_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -338,19 +338,19 @@ func (x *Cordinate) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Cordinate.ProtoReflect.Descriptor instead.
-func (*Cordinate) Descriptor() ([]byte, []int) {
+// Deprecated: Use Coordinate.ProtoReflect.Descriptor instead.
+func (*Coordinate) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *Cordinate) GetLatitude() float64 {
+func (x *Coordinate) GetLatitude() float64 {
 	if x != nil {
 		return x.Latitude
 	}
 	return 0
 }
 
-func (x *Cordinate) GetLongitude() float64 {
+func (x *Coordinate) GetLongitude() float64 {
 	if x != nil {
 		return x.Longitude
 	}
@@ -359,8 +359,8 @@ func (x *Cordinate) GetLongitude() float64 {
 
 type StartTripRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RideFareID    string                 `protobuf:"bytes,1,opt,name=rideFareID,proto3" json:"rideFareID,omitempty"`
-	UserID        string                 `protobuf:"bytes,2,opt,name=userID,proto3" json:"userID,omitempty"`
+	RideFareId    string                 `protobuf:"bytes,1,opt,name=rideFareId,proto3" json:"rideFareId,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -395,23 +395,23 @@ func (*StartTripRequest) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *StartTripRequest) GetRideFareID() string {
+func (x *StartTripRequest) GetRideFareId() string {
 	if x != nil {
-		return x.RideFareID
+		return x.RideFareId
 	}
 	return ""
 }
 
-func (x *StartTripRequest) GetUserID() string {
+func (x *StartTripRequest) GetUserId() string {
 	if x != nil {
-		return x.UserID
+		return x.UserId
 	}
 	return ""
 }
 
 type StartTripResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TripID        string                 `protobuf:"bytes,1,opt,name=tripID,proto3" json:"tripID,omitempty"`
+	TripId        string                 `protobuf:"bytes,1,opt,name=tripId,proto3" json:"tripId,omitempty"`
 	Trip          *Trip                  `protobuf:"bytes,2,opt,name=trip,proto3" json:"trip,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -447,9 +447,9 @@ func (*StartTripResponse) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *StartTripResponse) GetTripID() string {
+func (x *StartTripResponse) GetTripId() string {
 	if x != nil {
-		return x.TripID
+		return x.TripId
 	}
 	return ""
 }
@@ -463,11 +463,11 @@ func (x *StartTripResponse) GetTrip() *Trip {
 
 type Trip struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	ID               string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	SelectedRideFare *RideFare              `protobuf:"bytes,2,opt,name=selectedRideFare,proto3" json:"selectedRideFare,omitempty"`
 	Route            *Route                 `protobuf:"bytes,3,opt,name=route,proto3" json:"route,omitempty"`
 	Status           string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	UserID           string                 `protobuf:"bytes,5,opt,name=userID,proto3" json:"userID,omitempty"`
+	UserId           string                 `protobuf:"bytes,5,opt,name=userId,proto3" json:"userId,omitempty"`
 	Driver           *TripDriver            `protobuf:"bytes,6,opt,name=driver,proto3" json:"driver,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -503,9 +503,9 @@ func (*Trip) Descriptor() ([]byte, []int) {
 	return file_trip_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *Trip) GetID() string {
+func (x *Trip) GetId() string {
 	if x != nil {
-		return x.ID
+		return x.Id
 	}
 	return ""
 }
@@ -531,9 +531,9 @@ func (x *Trip) GetStatus() string {
 	return ""
 }
 
-func (x *Trip) GetUserID() string {
+func (x *Trip) GetUserId() string {
 	if x != nil {
-		return x.UserID
+		return x.UserId
 	}
 	return ""
 }
@@ -618,11 +618,11 @@ var File_trip_proto protoreflect.FileDescriptor
 const file_trip_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"trip.proto\x12\x04trip\"\x96\x01\n" +
+	"trip.proto\x12\x04trip\"\x98\x01\n" +
 	"\x12PreviewTripRequest\x12\x16\n" +
-	"\x06userID\x18\x01 \x01(\tR\x06userID\x125\n" +
-	"\rstartLocation\x18\x02 \x01(\v2\x0f.trip.CordinateR\rstartLocation\x121\n" +
-	"\vendLocation\x18\x03 \x01(\v2\x0f.trip.CordinateR\vendLocation\"f\n" +
+	"\x06userId\x18\x01 \x01(\tR\x06userId\x126\n" +
+	"\rstartLocation\x18\x02 \x01(\v2\x10.trip.CoordinateR\rstartLocation\x122\n" +
+	"\vendLocation\x18\x03 \x01(\v2\x10.trip.CoordinateR\vendLocation\"f\n" +
 	"\x13PreviewTripResponse\x12!\n" +
 	"\x05route\x18\x02 \x01(\v2\v.trip.RouteR\x05route\x12,\n" +
 	"\trideFares\x18\x03 \x03(\v2\x0e.trip.RideFareR\trideFares\"k\n" +
@@ -631,32 +631,31 @@ const file_trip_proto_rawDesc = "" +
 	"\bdistance\x18\x02 \x01(\x01R\bdistance\x12\x1a\n" +
 	"\bduration\x18\x03 \x01(\x01R\bduration\"\x82\x01\n" +
 	"\bRideFare\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x16\n" +
-	"\x06userID\x18\x02 \x01(\tR\x06userID\x12 \n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\tR\x06userId\x12 \n" +
 	"\vpackageSlug\x18\x03 \x01(\tR\vpackageSlug\x12,\n" +
-	"\x11totalPriceInCents\x18\x04 \x01(\x01R\x11totalPriceInCents\";\n" +
-	"\bGeometry\x12/\n" +
+	"\x11totalPriceInCents\x18\x04 \x01(\x01R\x11totalPriceInCents\">\n" +
+	"\bGeometry\x122\n" +
+	"\vcoordinates\x18\x01 \x03(\v2\x10.trip.CoordinateR\vcoordinates\"F\n" +
 	"\n" +
-	"cordinates\x18\x01 \x03(\v2\x0f.trip.CordinateR\n" +
-	"cordinates\"E\n" +
-	"\tCordinate\x12\x1a\n" +
+	"Coordinate\x12\x1a\n" +
 	"\blatitude\x18\x01 \x01(\x01R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\x02 \x01(\x01R\tlongitude\"J\n" +
 	"\x10StartTripRequest\x12\x1e\n" +
 	"\n" +
-	"rideFareID\x18\x01 \x01(\tR\n" +
-	"rideFareID\x12\x16\n" +
-	"\x06userID\x18\x02 \x01(\tR\x06userID\"K\n" +
+	"rideFareId\x18\x01 \x01(\tR\n" +
+	"rideFareId\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\tR\x06userId\"K\n" +
 	"\x11StartTripResponse\x12\x16\n" +
-	"\x06tripID\x18\x01 \x01(\tR\x06tripID\x12\x1e\n" +
+	"\x06tripId\x18\x01 \x01(\tR\x06tripId\x12\x1e\n" +
 	"\x04trip\x18\x02 \x01(\v2\n" +
 	".trip.TripR\x04trip\"\xcf\x01\n" +
 	"\x04Trip\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\x12:\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12:\n" +
 	"\x10selectedRideFare\x18\x02 \x01(\v2\x0e.trip.RideFareR\x10selectedRideFare\x12!\n" +
 	"\x05route\x18\x03 \x01(\v2\v.trip.RouteR\x05route\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\x12\x16\n" +
-	"\x06userID\x18\x05 \x01(\tR\x06userID\x12(\n" +
+	"\x06userId\x18\x05 \x01(\tR\x06userId\x12(\n" +
 	"\x06driver\x18\x06 \x01(\v2\x10.trip.TripDriverR\x06driver\"t\n" +
 	"\n" +
 	"TripDriver\x12\x0e\n" +
@@ -687,19 +686,19 @@ var file_trip_proto_goTypes = []any{
 	(*Route)(nil),               // 2: trip.Route
 	(*RideFare)(nil),            // 3: trip.RideFare
 	(*Geometry)(nil),            // 4: trip.Geometry
-	(*Cordinate)(nil),           // 5: trip.Cordinate
+	(*Coordinate)(nil),          // 5: trip.Coordinate
 	(*StartTripRequest)(nil),    // 6: trip.StartTripRequest
 	(*StartTripResponse)(nil),   // 7: trip.StartTripResponse
 	(*Trip)(nil),                // 8: trip.Trip
 	(*TripDriver)(nil),          // 9: trip.TripDriver
 }
 var file_trip_proto_depIdxs = []int32{
-	5,  // 0: trip.PreviewTripRequest.startLocation:type_name -> trip.Cordinate
-	5,  // 1: trip.PreviewTripRequest.endLocation:type_name -> trip.Cordinate
+	5,  // 0: trip.PreviewTripRequest.startLocation:type_name -> trip.Coordinate
+	5,  // 1: trip.PreviewTripRequest.endLocation:type_name -> trip.Coordinate
 	2,  // 2: trip.PreviewTripResponse.route:type_name -> trip.Route
 	3,  // 3: trip.PreviewTripResponse.rideFares:type_name -> trip.RideFare
 	4,  // 4: trip.Route.geometry:type_name -> trip.Geometry
-	5,  // 5: trip.Geometry.cordinates:type_name -> trip.Cordinate
+	5,  // 5: trip.Geometry.coordinates:type_name -> trip.Coordinate
 	8,  // 6: trip.StartTripResponse.trip:type_name -> trip.Trip
 	3,  // 7: trip.Trip.selectedRideFare:type_name -> trip.RideFare
 	2,  // 8: trip.Trip.route:type_name -> trip.Route

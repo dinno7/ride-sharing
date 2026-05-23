@@ -17,14 +17,14 @@ func tripPreviewToGrpc(i *ports.PreviewTripOutput) *pb.PreviewTripResponse {
 func routeToGrpc(r *types.Route) *pb.Route {
 	geometry := []*pb.Geometry{}
 	for _, g := range r.Geometry {
-		cordinates := []*pb.Cordinate{}
+		coordinates := []*pb.Coordinate{}
 		for _, c := range g.Coordinates {
-			cordinates = append(cordinates, &pb.Cordinate{
+			coordinates = append(coordinates, &pb.Coordinate{
 				Latitude:  c.Latitude,
 				Longitude: c.Longitude,
 			})
 		}
-		newGeo := &pb.Geometry{Cordinates: cordinates}
+		newGeo := &pb.Geometry{Coordinates: coordinates}
 		geometry = append(geometry, newGeo)
 	}
 	return &pb.Route{
@@ -44,8 +44,8 @@ func rideFaresToGrpc(rideFares []*domain.RideFare) []*pb.RideFare {
 
 func rideFareToGrpc(rideFares *domain.RideFare) *pb.RideFare {
 	return &pb.RideFare{
-		ID:                rideFares.ID,
-		UserID:            rideFares.UserID,
+		Id:                rideFares.ID,
+		UserId:            rideFares.UserID,
 		PackageSlug:       rideFares.PackageSlug,
 		TotalPriceInCents: rideFares.TotalPriceInCents,
 	}

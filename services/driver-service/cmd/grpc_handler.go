@@ -25,7 +25,7 @@ func (h *driverGrpcHandler) RegisterDriver(
 	ctx context.Context,
 	req *pb.DriverRequest,
 ) (*pb.DriverResponse, error) {
-	driver, err := h.driverService.RegisterDriver(req.GetDriverID(), req.PackageSlug)
+	driver, err := h.driverService.RegisterDriver(req.GetDriverId(), req.PackageSlug)
 	if err != nil {
 		return nil, err
 	}

@@ -23,7 +23,7 @@ const (
 
 type DriverRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DriverID      string                 `protobuf:"bytes,1,opt,name=driverID,proto3" json:"driverID,omitempty"`
+	DriverId      string                 `protobuf:"bytes,1,opt,name=driverId,proto3" json:"driverId,omitempty"`
 	PackageSlug   string                 `protobuf:"bytes,2,opt,name=packageSlug,proto3" json:"packageSlug,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -59,9 +59,9 @@ func (*DriverRequest) Descriptor() ([]byte, []int) {
 	return file_driver_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *DriverRequest) GetDriverID() string {
+func (x *DriverRequest) GetDriverId() string {
 	if x != nil {
-		return x.DriverID
+		return x.DriverId
 	}
 	return ""
 }
@@ -267,7 +267,7 @@ const file_driver_proto_rawDesc = "" +
 	"\n" +
 	"\fdriver.proto\x12\x06driver\"M\n" +
 	"\rDriverRequest\x12\x1a\n" +
-	"\bdriverID\x18\x01 \x01(\tR\bdriverID\x12 \n" +
+	"\bdriverId\x18\x01 \x01(\tR\bdriverId\x12 \n" +
 	"\vpackageSlug\x18\x02 \x01(\tR\vpackageSlug\"8\n" +
 	"\x0eDriverResponse\x12&\n" +
 	"\x06driver\x18\x01 \x01(\v2\x0e.driver.DriverR\x06driver\"\xda\x01\n" +

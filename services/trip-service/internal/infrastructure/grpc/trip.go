@@ -39,7 +39,7 @@ func (h *tripGrpcHandler) PreviewTrip(
 	destination := req.GetEndLocation()
 	log.Println("Calling preview trip application service")
 	tripPreview, err := h.tripService.PreviewTrip(ctx,
-		req.GetUserID(),
+		req.GetUserId(),
 		&types.Coordinate{
 			Latitude:  pickup.Latitude,
 			Longitude: pickup.Longitude,
@@ -59,8 +59,8 @@ func (h *tripGrpcHandler) StartTrip(
 	ctx context.Context,
 	req *pb.StartTripRequest,
 ) (*pb.StartTripResponse, error) {
-	fareID := req.GetRideFareID()
-	userID := req.GetUserID()
+	fareID := req.GetRideFareId()
+	userID := req.GetUserId()
 	trip, err := h.tripService.StartTrip(ctx, fareID, userID)
 	if err != nil {
 		return nil, err
@@ -73,12 +73,12 @@ func (h *tripGrpcHandler) StartTrip(
 	}
 
 	return &pb.StartTripResponse{
-		TripID: trip.ID,
+		TripId: trip.ID,
 		Trip: &pb.Trip{
-			ID:               trip.ID,
+			Id:               trip.ID,
 			SelectedRideFare: rideFareToGrpc(trip.RideFare),
 			Status:           trip.Status.String(),
-			UserID:           trip.UserID,
+			UserId:           trip.UserID,
 			Driver: &pb.TripDriver{
 				Id:             util.GenRandomID(),
 				Name:           "Taha",

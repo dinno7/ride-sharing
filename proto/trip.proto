@@ -10,9 +10,9 @@ service TripService {
 }
 
 message PreviewTripRequest {
-  string userID = 1;
-  Cordinate startLocation = 2;
-  Cordinate endLocation = 3;
+  string userId = 1;
+  Coordinate startLocation = 2;
+  Coordinate endLocation = 3;
 }
 
 message PreviewTripResponse {
@@ -27,35 +27,35 @@ message Route {
 }
 
 message RideFare {
-  string ID = 1;
-  string userID = 2;
+  string id = 1;
+  string userId = 2;
   string packageSlug = 3;
   double totalPriceInCents = 4;
 }
 
-message Geometry { repeated Cordinate cordinates = 1; }
+message Geometry { repeated Coordinate coordinates = 1; }
 
-message Cordinate {
+message Coordinate {
   double latitude = 1;
   double longitude = 2;
 }
 
 message StartTripRequest {
-  string rideFareID = 1;
-  string userID = 2;
+  string rideFareId = 1;
+  string userId = 2;
 }
 
 message StartTripResponse {
-  string tripID = 1;
+  string tripId = 1;
   Trip trip = 2;
 }
 
 message Trip {
-  string ID = 1;
+  string id = 1;
   RideFare selectedRideFare = 2;
   Route route = 3;
   string status = 4;
-  string userID = 5;
+  string userId = 5;
   TripDriver driver = 6;
 }
 
