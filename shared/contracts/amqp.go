@@ -1,5 +1,7 @@
 package contracts
 
+import pb "github.com/dinno7/ride-sharing/shared/proto/trip"
+
 // AmqpMessage is the message structure for AMQP.
 type AmqpMessage struct {
 	OwnerID string `json:"ownerId"`
@@ -34,6 +36,5 @@ const (
 )
 
 type TripCreatedEventData struct {
-	TripID      string `json:"trip_id"`
-	PackageSlug string `json:"package_slug"`
+	Trip *pb.Trip `json:"trip"`
 }
