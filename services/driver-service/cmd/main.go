@@ -43,11 +43,12 @@ func main() {
 	if err != nil {
 		appLogger.Fatal("failed to declare message consumer", err)
 	}
-
-	tripConsumer := NewTripConsumer(appLogger)
-	rmqConsumer.Consume(TripCreatedQueue, tripConsumer.HandleTripCreatedEvent)
+	rmqPublisher := setupMessagePublisher(rabbitmq)
 
 	driverService := NewDriverService()
+
+	tripConsumer := NewTripConsumer(driverService, rmqPublisher, appLogger)
+	rmqConsumer.Consume(TripCreatedQueue, tripConsumer.HandleTripCreatedEvent)
 
 	server := googlegrpc.NewServer()
 
@@ -62,6 +63,10 @@ func main() {
 
 	<-ctx.Done()
 	server.GracefulStop()
+}
+
+func setupMessagePublisher(conn *rmqMessaging.RabbitMQConnection) *rmqMessaging.Publisher {
+	return rmqMessaging.NewPublisher(conn, "drivers")
 }
 
 func setupMessageConsumer(
