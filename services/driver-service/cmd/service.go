@@ -24,6 +24,7 @@ type DriverService struct {
 func NewDriverService() *DriverService {
 	return &DriverService{
 		drivers: make([]*driverInMap, 0),
+		mu:      sync.RWMutex{},
 	}
 }
 
