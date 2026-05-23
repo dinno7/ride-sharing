@@ -61,6 +61,7 @@ func (s *tripService) PreviewTrip(
 			UserID:            userID,
 			PackageSlug:       rfp.PackageSlug,
 			TotalPriceInCents: rfp.TotalPriceInCents,
+			Route:             route,
 		}
 	}
 
