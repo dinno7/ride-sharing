@@ -3,33 +3,59 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 
 	"github.com/dinno7/ride-sharing/shared/contracts"
 	"github.com/dinno7/ride-sharing/shared/logger"
-	"github.com/dinno7/ride-sharing/shared/messaging/rabbitmq"
+	messaging "github.com/dinno7/ride-sharing/shared/messaging/rabbitmq"
 	"github.com/rabbitmq/amqp091-go"
 )
 
+var ErrNoDriverAvailable = errors.New("no any driver available")
+
 type tripConsumer struct {
-	logger logger.Logger
+	logger        logger.Logger
+	driverService *DriverService
+	publisher     *messaging.Publisher
 }
 
-func NewTripConsumer(logger logger.Logger) *tripConsumer {
-	return &tripConsumer{logger: logger}
+func NewTripConsumer(
+	driverService *DriverService,
+	publisher *messaging.Publisher,
+	logger logger.Logger,
+) *tripConsumer {
+	return &tripConsumer{logger: logger, driverService: driverService, publisher: publisher}
 }
 
 func (c *tripConsumer) HandleTripCreatedEvent(
 	ctx context.Context,
 	message *amqp091.Delivery,
 ) error {
-	var payload rabbitmq.Event[contracts.TripCreatedEventData]
+	var payload messaging.Event[contracts.TripCreatedEventData]
 	if err := json.Unmarshal(message.Body, &payload); err != nil {
 		return err
 	}
+
+	drivers := c.driverService.GetAvailableDriverIDs(payload.Data.Trip.SelectedRideFare.PackageSlug)
+	if len(drivers) == 0 {
+		c.logger.Info("no any driver found")
+		if err := c.publisher.PublishEvent(
+			ctx,
+			contracts.TripEventNoDriversFound,
+			payload.Data.Trip.UserId,
+			nil,
+		); err != nil {
+			c.logger.Error("failed to publish message", err)
+			return err
+		}
+		return ErrNoDriverAvailable
+	}
+
+	selectedDriver := drivers[0]
+	c.publisher.PublishCommand(ctx, contracts.DriverCmdTripRequest, selectedDriver, payload.Data)
 	c.logger.Info(
 		"💀 New trip created",
-		"trip_id", payload.Data.TripID,
-		"package_slug", payload.Data.PackageSlug,
+		"data", payload.Data,
 	)
 	return nil
 }
