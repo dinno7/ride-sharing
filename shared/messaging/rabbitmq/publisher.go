@@ -22,10 +22,11 @@ func NewPublisher(conn *RabbitMQConnection, serviceName string) *Publisher {
 	}
 }
 
-func (p *Publisher) PublishEvent(ctx context.Context, eventName string, data any) error {
+func (p *Publisher) PublishEvent(ctx context.Context, eventName, ownerID string, data any) error {
 	event := Event[any]{
 		ID:        uuid.New().String(),
 		Type:      eventName,
+		OwnerID:   ownerID,
 		Source:    p.sourceName,
 		Timestamp: time.Now().UTC(),
 		Data:      data,
@@ -52,9 +53,14 @@ func (p *Publisher) PublishEvent(ctx context.Context, eventName string, data any
 	)
 }
 
-func (p *Publisher) PublishCommand(ctx context.Context, commandName string, data any) error {
+func (p *Publisher) PublishCommand(
+	ctx context.Context,
+	commandName, ownerID string,
+	data any,
+) error {
 	event := Event[any]{
 		ID:        uuid.New().String(),
+		OwnerID:   ownerID,
 		Type:      commandName,
 		Source:    p.sourceName,
 		Timestamp: time.Now().UTC(),
