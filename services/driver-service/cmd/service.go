@@ -28,6 +28,24 @@ func NewDriverService() *DriverService {
 	}
 }
 
+func (s *DriverService) GetAvailableDriverIDs(packageSlug string) []string {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	availableDrivers := []string{}
+	if len(s.drivers) == 0 {
+		return availableDrivers
+	}
+
+	for i := range s.drivers {
+		driver := s.drivers[i]
+		if driver.Driver.PackageSlug == packageSlug {
+			availableDrivers = append(availableDrivers, driver.Driver.Id)
+		}
+	}
+	return availableDrivers
+}
+
 func (s *DriverService) RegisterDriver(driverId string, packageSlug string) (*pb.Driver, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
