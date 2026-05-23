@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	grpcclients "github.com/dinno7/ride-sharing/services/api-gateway/cmd/grpc_clients"
+	"github.com/dinno7/ride-sharing/shared/util"
 	"github.com/labstack/echo/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,6 +15,7 @@ import (
 func handleTripPreview(c *echo.Context) error {
 	payload := new(HTTPTripPreviewRequestPayload)
 	if err := c.Bind(payload); err != nil {
+		c.Logger().Error("failed to bind payload", "error", err)
 		return err
 	}
 	if err := c.Validate(payload); err != nil {
@@ -48,7 +50,8 @@ func handleTripPreview(c *echo.Context) error {
 	c.Logger().Info("Done")
 
 	// NOTE Send success response
-	return c.JSON(http.StatusOK, tripServicePayload)
+
+	return c.JSON(http.StatusOK, util.NewSuccessPayload(tripServicePayload, "ok"))
 }
 
 func handleTripStart(c *echo.Context) error {
@@ -82,5 +85,8 @@ func handleTripStart(c *echo.Context) error {
 	c.Logger().Info("Done")
 
 	// NOTE Send success response
-	return c.JSON(http.StatusOK, payload.ToHttp(tripServicePayload))
+	return c.JSON(
+		http.StatusOK,
+		util.NewSuccessPayload(payload.ToHttp(tripServicePayload), "trip started"),
+	)
 }
