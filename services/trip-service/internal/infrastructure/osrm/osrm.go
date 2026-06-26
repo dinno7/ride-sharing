@@ -3,6 +3,8 @@ package osrm
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
@@ -45,10 +47,11 @@ type osrmResponse struct {
 func (rc *osrmRouteCalculator) CalcRoutes(
 	pickup, destination *types.Coordinate,
 ) (*types.Route, error) {
-	var osrmRes osrmResponse
-	if err := json.Unmarshal([]byte(mockJson), &osrmRes); err != nil {
+	osrmRes, err := getOSRMRoutes(pickup, destination)
+	if err != nil {
 		return nil, err
 	}
+
 	if strings.ToLower(osrmRes.Code) != "ok" {
 		return nil, errors.New("osrm's response code is not ok")
 	}
@@ -72,6 +75,34 @@ func (rc *osrmRouteCalculator) CalcRoutes(
 			{Coordinates: coordinates},
 		},
 	}, nil
+}
+
+func getOSRMRoutes(pickup, destination *types.Coordinate) (*osrmResponse, error) {
+	url := fmt.Sprintf(
+		"http://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=geojson",
+		pickup.Longitude,
+		pickup.Latitude,
+		destination.Longitude,
+		destination.Latitude,
+	)
+	result, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	var osrmRes osrmResponse
+	if err := json.NewDecoder(result.Body).Decode(&osrmRes); err != nil {
+		return nil, err
+	}
+
+	return &osrmRes, nil
+}
+
+func getOSRMRoutesMock(pickup, destination *types.Coordinate) (*osrmResponse, error) {
+	var osrmRes osrmResponse
+	if err := json.Unmarshal([]byte(mockJson), &osrmRes); err != nil {
+		return nil, err
+	}
+	return &osrmRes, nil
 }
 
 // The mock OSRM Response(The whole IRAN Internet goes down:/):
