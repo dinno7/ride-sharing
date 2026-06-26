@@ -31,7 +31,7 @@ func (c *tripConsumer) HandleTripCreatedEvent(
 	ctx context.Context,
 	message *amqp091.Delivery,
 ) error {
-	var payload messaging.Event[contracts.TripCreatedEventData]
+	var payload messaging.MessageInfo[contracts.TripCreatedEventData]
 	if err := json.Unmarshal(message.Body, &payload); err != nil {
 		return err
 	}

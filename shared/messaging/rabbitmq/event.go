@@ -1,14 +1,19 @@
 package rabbitmq
 
-import (
-	"time"
+type MessageInfoKind string
+
+const (
+	MessageInfoKindEvent   MessageInfoKind = "event"
+	MessageInfoKindCommand MessageInfoKind = "command"
 )
 
-type Event[T any] struct {
-	ID        string    `json:"id"`
-	OwnerID   string    `json:"owner_id"`
-	Type      string    `json:"type"`
-	Source    string    `json:"source"` // which service published
-	Timestamp time.Time `json:"timestamp"`
-	Data      T         `json:"data"`
-}
+type (
+	MessageInfo[T any] struct {
+		ID         string          `json:"id"`
+		OwnerID    string          `json:"owner_id"`
+		RoutingKey string          `json:"routing_key"`
+		Kind       MessageInfoKind `json:"kind"`
+		Source     string          `json:"source"` // which service published
+		Data       T               `json:"data"`
+	}
+)
