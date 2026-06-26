@@ -5,8 +5,6 @@ import (
 
 	pb "github.com/dinno7/ride-sharing/shared/proto/driver"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type driverGrpcHandler struct {
@@ -38,5 +36,8 @@ func (h *driverGrpcHandler) UnregisterDriver(
 	ctx context.Context,
 	req *pb.DriverRequest,
 ) (*pb.DriverResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UnregisterDriver not implemented")
+	h.driverService.UnregisterDriver(req.GetDriverId())
+	return &pb.DriverResponse{
+		Driver: nil,
+	}, nil
 }
