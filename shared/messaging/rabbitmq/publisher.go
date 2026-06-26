@@ -22,67 +22,64 @@ func NewPublisher(conn *RabbitMQConnection, serviceName string) *Publisher {
 	}
 }
 
-func (p *Publisher) PublishEvent(ctx context.Context, eventName, ownerID string, data any) error {
-	event := Event[any]{
-		ID:        uuid.New().String(),
-		Type:      eventName,
-		OwnerID:   ownerID,
-		Source:    p.sourceName,
-		Timestamp: time.Now().UTC(),
-		Data:      data,
+func (p *Publisher) PublishEvent(ctx context.Context, routingKey, ownerID string, data any) error {
+	messageInfo := MessageInfo[any]{
+		ID:         uuid.New().String(),
+		RoutingKey: routingKey,
+		Kind:       MessageInfoKindEvent,
+		OwnerID:    ownerID,
+		Source:     p.sourceName,
+		Data:       data,
 	}
 
-	body, err := json.Marshal(event)
+	return p.publish(ctx, messageInfo)
+}
+
+func (p *Publisher) PublishCommand(
+	ctx context.Context,
+	routingKey, ownerID string,
+	data any,
+) error {
+	messageInfo := MessageInfo[any]{
+		ID:         uuid.New().String(),
+		RoutingKey: routingKey,
+		Kind:       MessageInfoKindCommand,
+		OwnerID:    ownerID,
+		Source:     p.sourceName,
+		Data:       data,
+	}
+	return p.publish(ctx, messageInfo)
+}
+
+func (p *Publisher) ReQueueWithNewID(
+	ctx context.Context, msg *amqp.Delivery,
+) error {
+	var msgData MessageInfo[any]
+
+	if err := json.Unmarshal(msg.Body, &msgData); err != nil {
+		return err
+	}
+
+	return p.publish(ctx, msgData)
+}
+
+func (p *Publisher) publish(ctx context.Context, data MessageInfo[any]) error {
+	body, err := json.Marshal(data)
 	if err != nil {
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
 	return p.conn.Channel().PublishWithContext(
 		ctx,
-		ExchangeMain, // exchange
-		eventName,    // routing key
-		false,        // mandatory
-		false,        // immediate
+		ExchangeMain,    // exchange
+		data.RoutingKey, // routing key
+		false,           // mandatory
+		false,           // immediate
 		amqp.Publishing{
 			ContentType:  "application/json",
 			DeliveryMode: amqp.Persistent,
-			MessageId:    event.ID,
-			Timestamp:    event.Timestamp,
-			Body:         body,
-		},
-	)
-}
-
-func (p *Publisher) PublishCommand(
-	ctx context.Context,
-	commandName, ownerID string,
-	data any,
-) error {
-	event := Event[any]{
-		ID:        uuid.New().String(),
-		OwnerID:   ownerID,
-		Type:      commandName,
-		Source:    p.sourceName,
-		Timestamp: time.Now().UTC(),
-		Data:      data,
-	}
-
-	body, err := json.Marshal(event)
-	if err != nil {
-		return fmt.Errorf("failed to marshal command: %w", err)
-	}
-
-	return p.conn.Channel().PublishWithContext(
-		ctx,
-		ExchangeMain,
-		commandName,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  "application/json",
-			DeliveryMode: amqp.Persistent,
-			MessageId:    event.ID,
-			Timestamp:    event.Timestamp,
+			MessageId:    data.ID,
+			Timestamp:    time.Now().UTC(),
 			Body:         body,
 		},
 	)
