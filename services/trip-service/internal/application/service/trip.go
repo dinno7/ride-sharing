@@ -12,13 +12,15 @@ import (
 )
 
 type tripService struct {
-	repo            ports.TripRepository
-	routeCalculator ports.RouteCalculator
+	repo             ports.TripRepository
+	routeCalculator  ports.RouteCalculator
+	tripEventHandler ports.TripEventHandler
 }
 
 func NewTripService(
 	repo ports.TripRepository,
 	routeCalculator ports.RouteCalculator,
+	tripEventHandler ports.TripEventHandler,
 ) ports.TripService {
 	return &tripService{repo: repo, routeCalculator: routeCalculator}
 }
@@ -39,6 +41,11 @@ func (s *tripService) StartTrip(ctx context.Context, fareID, userID string) (*do
 	if err != nil {
 		return nil, fmt.Errorf("failed to %w", err)
 	}
+
+	if err := s.tripEventHandler.TripCreated(ctx, trip); err != nil {
+		return nil, err
+	}
+
 	return persistTrip, nil
 }
 

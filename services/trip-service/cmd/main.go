@@ -30,19 +30,6 @@ func main() {
 	slogger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	appLogger := logger.NewSlogLogger(slogger)
 
-	tripRepo := inmem.NewInMemTripRepository()
-	osrmRouteCalculator := osrm.NewRouteCalculator()
-	tripService := service.NewTripService(tripRepo, osrmRouteCalculator)
-
-	addr, err := net.Listen("tcp", grpcAddr)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer cancel()
-
 	rmqConnection, err := rmqMessaging.NewRabbitMQBroker(amqpURI, appLogger)
 	if err != nil {
 		log.Fatal(err)
@@ -52,8 +39,21 @@ func main() {
 	rmqPublisher := SetupMessagePublisher(rmqConnection, appLogger)
 	tripEventHandler := events.NewTripEventHandler(rmqPublisher)
 
+	tripRepo := inmem.NewInMemTripRepository()
+	osrmRouteCalculator := osrm.NewRouteCalculator()
+	tripService := service.NewTripService(tripRepo, osrmRouteCalculator, tripEventHandler)
+
+	addr, err := net.Listen("tcp", grpcAddr)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	server := googlegrpc.NewServer()
-	grpc.NewTripGrpcHandler(server, tripService, tripEventHandler)
+	grpc.NewTripGrpcHandler(server, tripService)
+
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
+
 	go func() {
 		log.Println("Starting Trip Service")
 		if err := server.Serve(addr); err != nil {

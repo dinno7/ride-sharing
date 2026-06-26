@@ -13,18 +13,15 @@ import (
 
 type tripGrpcHandler struct {
 	pb.UnimplementedTripServiceServer
-	tripService      ports.TripService
-	tripEventHandler ports.TripEventHandler
+	tripService ports.TripService
 }
 
 func NewTripGrpcHandler(
 	server *grpc.Server,
 	tripService ports.TripService,
-	tripEventHandler ports.TripEventHandler,
 ) *tripGrpcHandler {
 	handler := &tripGrpcHandler{
-		tripService:      tripService,
-		tripEventHandler: tripEventHandler,
+		tripService: tripService,
 	}
 	pb.RegisterTripServiceServer(server, handler)
 	return handler
@@ -34,7 +31,6 @@ func (h *tripGrpcHandler) PreviewTrip(
 	ctx context.Context,
 	req *pb.PreviewTripRequest,
 ) (*pb.PreviewTripResponse, error) {
-	// userID := req.GetUserID()
 	pickup := req.GetStartLocation()
 	destination := req.GetEndLocation()
 	log.Println("Calling preview trip application service")
@@ -64,12 +60,6 @@ func (h *tripGrpcHandler) StartTrip(
 	trip, err := h.tripService.StartTrip(ctx, fareID, userID)
 	if err != nil {
 		return nil, err
-	}
-
-	err = h.tripEventHandler.TripCreated(ctx, trip)
-	if err != nil {
-		log.Println(err)
-		// TODO: ...
 	}
 
 	return &pb.StartTripResponse{
