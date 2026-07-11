@@ -58,7 +58,7 @@ func (rc *osrmRouteCalculator) CalcRoutes(
 
 	coordinates := []*types.Coordinate{}
 	for _, g := range osrmRes.Routes[0].Geometry.Coordinates {
-		lng, lat := g[0], g[1]
+		lat, lng := g[0], g[1]
 		if lng != 0 && lat != 0 {
 			cordinate := types.Coordinate{
 				Longitude: lng,
@@ -78,12 +78,12 @@ func (rc *osrmRouteCalculator) CalcRoutes(
 }
 
 func getOSRMRoutes(pickup, destination *types.Coordinate) (*osrmResponse, error) {
+	baseURL := "http://router.project-osrm.org"
 	url := fmt.Sprintf(
-		"http://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=geojson",
-		pickup.Longitude,
-		pickup.Latitude,
-		destination.Longitude,
-		destination.Latitude,
+		"%s/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=geojson",
+		baseURL,
+		pickup.Longitude, pickup.Latitude,
+		destination.Longitude, destination.Latitude,
 	)
 	result, err := http.Get(url)
 	if err != nil {
