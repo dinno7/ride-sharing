@@ -22,7 +22,11 @@ func NewTripService(
 	routeCalculator ports.RouteCalculator,
 	tripEventHandler ports.TripEventHandler,
 ) ports.TripService {
-	return &tripService{repo: repo, routeCalculator: routeCalculator}
+	return &tripService{
+		repo:             repo,
+		routeCalculator:  routeCalculator,
+		tripEventHandler: tripEventHandler,
+	}
 }
 
 func (s *tripService) StartTrip(ctx context.Context, fareID, userID string) (*domain.Trip, error) {
