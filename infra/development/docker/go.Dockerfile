@@ -11,10 +11,12 @@ RUN go env -w GOPROXY=https://go.devneeds.ir,direct && go env -w GOSUMDB=off;
 WORKDIR /data
 
 COPY ./go.mod ./go.sum ./air ./.air.toml  ./
+RUN go mod download;
+
 COPY ./services/$SERVICE_NAME ./services/$SERVICE_NAME
 COPY ./shared ./shared
 
-RUN  go mod tidy && go mod download;
+RUN go mod tidy;
 
 EXPOSE 7000
 
