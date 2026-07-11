@@ -52,10 +52,22 @@ func (c *tripConsumer) HandleTripCreatedEvent(
 	}
 
 	selectedDriver := drivers[0]
-	c.publisher.PublishCommand(ctx, contracts.DriverCmdTripRequest, selectedDriver, payload.Data)
+	if err := c.publisher.PublishCommand(
+		ctx,
+		contracts.DriverCmdTripRequest,
+		selectedDriver,
+		payload.Data,
+	); err != nil {
+		c.logger.Error(
+			"Failed to publish driver trip request command",
+			err,
+			"data", payload,
+		)
+		return err
+	}
 	c.logger.Info(
-		"💀 New trip created",
-		"data", payload.Data,
+		"New driver found for trip",
+		"owner_id", payload.OwnerID,
 	)
 	return nil
 }
