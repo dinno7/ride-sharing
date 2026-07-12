@@ -54,9 +54,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// publisher := setupMessagePublisher(messagingConn)
+	publisher := setupMessagePublisher(messagingConn)
 
-	driverWsHandler := ws.NewDriverWSHandler(wsHub, consumer)
+	driverWsHandler := ws.NewDriverWSHandler(wsHub, publisher)
 	riderWsHandler := ws.NewRiderWSHandler(wsHub)
 
 	// INFO: Consuming queues

@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"encoding/json"
 	"fmt"
 
 	grpcclients "github.com/dinno7/ride-sharing/services/api-gateway/cmd/grpc_clients"
@@ -13,14 +14,14 @@ import (
 )
 
 type DriverWSHandler struct {
-	hub               *ws.Hub
-	messengerConsumer *rabbitmq.Consumer
+	hub                *ws.Hub
+	messengerPublisher *rabbitmq.Publisher
 }
 
-func NewDriverWSHandler(hub *ws.Hub, messengerConsumer *rabbitmq.Consumer) *DriverWSHandler {
+func NewDriverWSHandler(hub *ws.Hub, messengerPublisher *rabbitmq.Publisher) *DriverWSHandler {
 	return &DriverWSHandler{
 		hub,
-		messengerConsumer,
+		messengerPublisher,
 	}
 }
 
@@ -90,6 +91,32 @@ func (h *DriverWSHandler) Handle(c *echo.Context) error {
 			c.Logger().Error("failed read msg", "error", err)
 			return err
 		}
-		fmt.Println("💀 New ws message from Driver -> ", msg)
+		type driverMsg struct {
+			Type string          `json:"type"`
+			Data json.RawMessage `json:"data"`
+		}
+
+		var driverMessage driverMsg
+		if err := json.Unmarshal(msg, &driverMessage); err != nil {
+			c.Logger().Error("Something went wrong in unmarshal driver's message", "error", err)
+			continue
+		}
+
+		fmt.Println("💀  driverMessage -> ", driverMessage.Type)
+		switch driverMessage.Type {
+		case contracts.DriverCmdLocation:
+			continue
+		case contracts.DriverCmdTripAccept, contracts.DriverCmdTripDecline:
+			if err := h.messengerPublisher.PublishCommand(
+				ctx,
+				driverMessage.Type,
+				client.ID(),
+				driverMessage.Data,
+			); err != nil {
+				c.Logger().Error("Something went wrong in publishing event", "error", err)
+			}
+		default:
+			c.Logger().Info("Unknown message", "message", driverMessage)
+		}
 	}
 }
