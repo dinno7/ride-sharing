@@ -31,7 +31,7 @@ func NewTripService(
 
 func (s *tripService) StartTrip(ctx context.Context, fareID, userID string) (*domain.Trip, error) {
 	// NOTE: Check trip fare & userid exists in db
-	fetchedFare, err := s.repo.GetFareByID(fareID)
+	fetchedFare, err := s.repo.GetFareByID(ctx, fareID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,4 +85,23 @@ func (s *tripService) PreviewTrip(
 		RideFares: rideFares,
 		Route:     route,
 	}, nil
+}
+
+func (s *tripService) UpdateTripStatus(
+	ctx context.Context,
+	tripID string,
+	newStatus *domain.TripStatus,
+) (*domain.Trip, error) {
+	if !newStatus.IsValid() {
+		return nil, domain.ErrInvalidTripStatus
+	}
+	trip, err := s.repo.GetTripByID(ctx, tripID)
+	if trip == nil {
+		return nil, domain.ErrTripNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return s.repo.UpdateStatus(ctx, trip.ID, newStatus)
 }

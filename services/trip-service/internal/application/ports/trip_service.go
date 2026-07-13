@@ -19,4 +19,9 @@ type TripService interface {
 		userID string,
 		pickup, destination *types.Coordinate,
 	) (*PreviewTripOutput, error)
+	UpdateTripStatus(
+		ctx context.Context,
+		tripID string,
+		newStatus *domain.TripStatus,
+	) (*domain.Trip, error)
 }
