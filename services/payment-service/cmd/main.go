@@ -7,7 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/dinno7/ride-sharing/services/payment-service/internal/application"
 	"github.com/dinno7/ride-sharing/services/payment-service/internal/domain"
+	"github.com/dinno7/ride-sharing/services/payment-service/internal/infrastructure/payment"
 	"github.com/dinno7/ride-sharing/shared/env"
 	"github.com/dinno7/ride-sharing/shared/logger"
 	messaging "github.com/dinno7/ride-sharing/shared/messaging/rabbitmq"
@@ -54,6 +56,9 @@ func main() {
 		panic(err)
 	}
 	defer rabbitmq.Close()
+
+	paymentProcessor := payment.NewStripePaymentProcessor(stripeCfg)
+	paymentService := application.NewPaymentService(paymentProcessor)
 
 	// Wait for shutdown signal
 	<-ctx.Done()
