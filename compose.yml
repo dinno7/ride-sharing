@@ -13,20 +13,6 @@ services:
   #     - "5672:5672"
   #   labels:
   #     NAME: "rabbitmq"
-  api-gateway:
-    container_name: api-gateway
-    build:
-      context: .
-      dockerfile: ./infra/development/docker/go.Dockerfile
-      args:
-        - SERVICE_NAME=api-gateway
-    ports:
-      - 7000:7000
-    networks:
-      - internal
-    volumes:
-      - ./services/api-gateway/:/data/services/api-gateway/
-      - ./shared/:/data/shared/
 
   trip-service:
     container_name: trip-service
@@ -54,8 +40,8 @@ services:
       dockerfile: ./infra/development/docker/go.Dockerfile
       args:
         - SERVICE_NAME=driver-service
-    deploy:
-      replicas: 1
+    # deploy:
+    #   replicas: 1
     # ports:
     #   - 7002:9000
     # depends_on:
@@ -65,6 +51,41 @@ services:
       - internal
     volumes:
       - ./services/driver-service/:/data/services/driver-service/
+      - ./shared/:/data/shared/
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: ./infra/development/docker/go.Dockerfile
+      args:
+        - SERVICE_NAME=payment-service
+    networks:
+      - rabbitmq
+      - internal
+    volumes:
+      - ./services/payment-service/:/data/services/payment-service/
+      - ./shared/:/data/shared/
+    env_file:
+      - ./.env
+
+  api-gateway:
+    container_name: api-gateway
+    depends_on:
+      - trip-service
+      - driver-service
+      - payment-service
+    build:
+      context: .
+      dockerfile: ./infra/development/docker/go.Dockerfile
+      args:
+        - SERVICE_NAME=api-gateway
+    ports:
+      - 7000:7000
+    networks:
+      - internal
+      - rabbitmq
+    volumes:
+      - ./services/api-gateway/:/data/services/api-gateway/
       - ./shared/:/data/shared/
 
   web:
@@ -78,12 +99,8 @@ services:
       - 3000:3000
     networks:
       - internal
-    environment:
-      # Used by the browser (Client-side)
-      - NEXT_PUBLIC_API_URL=http://localhost:7000
-      - NEXT_PUBLIC_WEBSOCKET_URL=ws://localhost:7000/ws
-      # Used by Next.js Server (Server-side fetching)
-      - INTERNAL_API_URL=http://api-gateway:7000
+    volumes:
+      - ./web/src:/app/src
 
 networks:
   internal:
