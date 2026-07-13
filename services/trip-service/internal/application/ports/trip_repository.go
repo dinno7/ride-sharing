@@ -12,5 +12,11 @@ type TripRepository interface {
 		ctx context.Context,
 		estimatedPackagePrices []*domain.RideFare,
 	) ([]*domain.RideFare, error)
-	GetFareByID(fareID string) (*domain.RideFare, error)
+	GetFareByID(ctx context.Context, fareID string) (*domain.RideFare, error)
+	GetTripByID(ctx context.Context, tripID string) (*domain.Trip, error)
+	UpdateStatus(
+		ctx context.Context,
+		tripID string,
+		newStatus *domain.TripStatus,
+	) (*domain.Trip, error)
 }

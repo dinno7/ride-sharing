@@ -2,6 +2,7 @@ package inmem
 
 import (
 	"context"
+	"errors"
 	"sync"
 
 	"github.com/dinno7/ride-sharing/services/trip-service/internal/application/ports"
@@ -47,6 +48,7 @@ func (repo *tripRepositoryInMem) SaveRideFares(
 }
 
 func (repo *tripRepositoryInMem) GetFareByID(
+	ctx context.Context,
 	fareID string,
 ) (*domain.RideFare, error) {
 	repo.RLock()
@@ -58,4 +60,39 @@ func (repo *tripRepositoryInMem) GetFareByID(
 		}
 	}
 	return nil, domain.ErrFareNotFound
+}
+
+func (repo *tripRepositoryInMem) GetTripByID(
+	ctx context.Context,
+	tripID string,
+) (*domain.Trip, error) {
+	repo.RLock()
+	var trip *domain.Trip
+	for i := range repo.trips {
+		currentTrip := repo.trips[i]
+		if currentTrip.ID == tripID {
+			trip = currentTrip
+		}
+	}
+	repo.RUnlock()
+
+	if trip == nil {
+		return nil, errors.New("trip not found")
+	}
+
+	return trip, nil
+}
+
+func (repo *tripRepositoryInMem) UpdateStatus(
+	ctx context.Context,
+	tripID string,
+	newStatus *domain.TripStatus,
+) (*domain.Trip, error) {
+	repo.Lock()
+	defer repo.Unlock()
+
+	trip := repo.trips[tripID]
+	trip.Status = newStatus
+
+	return trip, nil
 }
