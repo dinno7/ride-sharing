@@ -1,3 +1,3 @@
 package main
 
-const TripCreatedQueue = "trip_created_queue"
+const FindAvailableDriverQueue = "q.find_available_driver"

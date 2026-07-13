@@ -48,7 +48,9 @@ func main() {
 	driverService := NewDriverService()
 
 	tripConsumer := NewTripConsumer(driverService, rmqPublisher, appLogger)
-	rmqConsumer.Consume(TripCreatedQueue, tripConsumer.HandleTripCreatedEvent)
+	if err := rmqConsumer.Consume(FindAvailableDriverQueue, tripConsumer.Handle); err != nil {
+		panic(err)
+	}
 
 	server := googlegrpc.NewServer()
 
@@ -76,15 +78,18 @@ func setupMessageConsumer(
 	consumer := rmqMessaging.NewConsumer(conn, logger)
 
 	err := consumer.DeclareAndBind(rmqMessaging.QueueConfig{
-		Name:       TripCreatedQueue,
+		Name:       FindAvailableDriverQueue,
 		Durable:    true,
 		DLXEnabled: true,
 		Exclusive:  false,
 		AutoDelete: false,
 	}, []rmqMessaging.BindingConfig{
 		{
-			Exchange:    rmqMessaging.ExchangeMain,
-			RoutingKeys: []string{contracts.TripEventCreated},
+			Exchange: rmqMessaging.ExchangeMain,
+			RoutingKeys: []string{
+				contracts.TripEventCreated,
+				contracts.TripEventDriverNotInterested,
+			},
 		},
 	})
 	if err != nil {

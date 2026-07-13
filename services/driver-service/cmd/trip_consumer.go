@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math/rand"
 
 	"github.com/dinno7/ride-sharing/shared/contracts"
 	"github.com/dinno7/ride-sharing/shared/logger"
@@ -27,7 +28,7 @@ func NewTripConsumer(
 	return &tripConsumer{logger: logger, driverService: driverService, publisher: publisher}
 }
 
-func (c *tripConsumer) HandleTripCreatedEvent(
+func (c *tripConsumer) Handle(
 	ctx context.Context,
 	message *amqp091.Delivery,
 ) error {
@@ -51,7 +52,10 @@ func (c *tripConsumer) HandleTripCreatedEvent(
 		return ErrNoDriverAvailable
 	}
 
-	selectedDriver := drivers[0]
+	// INFO: Find random driver for now
+	randIndex := rand.Intn(len(drivers))
+	selectedDriver := drivers[randIndex]
+
 	if err := c.publisher.PublishCommand(
 		ctx,
 		contracts.DriverCmdTripRequest,

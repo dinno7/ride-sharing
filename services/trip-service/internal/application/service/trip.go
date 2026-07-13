@@ -53,6 +53,20 @@ func (s *tripService) StartTrip(ctx context.Context, fareID, userID string) (*do
 	return persistTrip, nil
 }
 
+func (s *tripService) GetTripByID(
+	ctx context.Context,
+	tripID string,
+) (*domain.Trip, error) {
+	trip, err := s.repo.GetTripByID(ctx, tripID)
+	if trip == nil {
+		return nil, domain.ErrTripNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return trip, err
+}
+
 func (s *tripService) PreviewTrip(
 	ctx context.Context,
 	userID string,
@@ -95,10 +109,7 @@ func (s *tripService) UpdateTripStatus(
 	if !newStatus.IsValid() {
 		return nil, domain.ErrInvalidTripStatus
 	}
-	trip, err := s.repo.GetTripByID(ctx, tripID)
-	if trip == nil {
-		return nil, domain.ErrTripNotFound
-	}
+	trip, err := s.GetTripByID(ctx, tripID)
 	if err != nil {
 		return nil, err
 	}
