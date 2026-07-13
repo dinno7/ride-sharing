@@ -7,11 +7,11 @@ import (
 type Trip struct {
 	ID       string      `json:"id"`
 	UserID   string      `json:"user_id"`
-	Status   *tripStatus `json:"status"`
+	Status   *TripStatus `json:"status"`
 	RideFare *RideFare   `json:"ride_fare"`
 }
 
-func NewTrip(userID string, status *tripStatus, fare *RideFare) *Trip {
+func NewTrip(userID string, status *TripStatus, fare *RideFare) *Trip {
 	return &Trip{
 		ID:       util.GenRandomID(),
 		UserID:   userID,

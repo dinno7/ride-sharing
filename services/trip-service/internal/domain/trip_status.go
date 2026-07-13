@@ -1,32 +1,36 @@
 package domain
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"slices"
+)
 
-type tripStatus struct {
+type TripStatus struct {
 	value string
 }
 
 var (
-	TripStatusPending  = &tripStatus{"pending"}
-	TripStatusComplete = &tripStatus{"complete"}
+	TripStatusPending  = &TripStatus{"pending"}
+	TripStatusComplete = &TripStatus{"complete"}
+	TripStatusAccepted = &TripStatus{"accepted"}
 )
 
-func (ts *tripStatus) String() string {
+func (ts *TripStatus) String() string {
 	return ts.value
 }
 
-func (ts *tripStatus) MarshalJSON() ([]byte, error) {
+// INFO: For showing it in json as string not a struct
+func (ts *TripStatus) MarshalJSON() ([]byte, error) {
 	if ts == nil {
 		return []byte("null"), nil
 	}
 	return json.Marshal(ts.value)
 }
 
-func (ts *tripStatus) IsValid() bool {
-	switch ts {
-	case TripStatusPending:
-		return true
-	default:
-		return false
-	}
+func (ts *TripStatus) IsValid() bool {
+	return slices.Contains([]*TripStatus{
+		TripStatusPending,
+		TripStatusAccepted,
+		TripStatusComplete,
+	}, ts)
 }
