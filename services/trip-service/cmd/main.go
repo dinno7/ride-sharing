@@ -51,6 +51,17 @@ func main() {
 	server := googlegrpc.NewServer()
 	grpc.NewTripGrpcHandler(server, tripService)
 
+	// INFO: Consuming messaging broker
+	rmqConsumer, err := setupMessageConsumer(rmqConnection, appLogger)
+	if err != nil {
+		panic(err)
+	}
+	driverConsumerHandler := events.NewDriverConsumerHandler(tripService, rmqPublisher)
+
+	if err := rmqConsumer.Consume(DriverTripAnswerQueue, driverConsumerHandler.Handle); err != nil {
+		panic(err)
+	}
+
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
