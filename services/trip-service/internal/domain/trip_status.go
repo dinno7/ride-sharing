@@ -11,8 +11,8 @@ type TripStatus struct {
 
 var (
 	TripStatusPending  = &TripStatus{"pending"}
-	TripStatusComplete = &TripStatus{"complete"}
 	TripStatusAccepted = &TripStatus{"accepted"}
+	TripStatusComplete = &TripStatus{"complete"}
 )
 
 func (ts *TripStatus) String() string {

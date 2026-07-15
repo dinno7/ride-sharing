@@ -70,3 +70,9 @@ type PaymentCmdCreateSessionData struct {
 	Amount   float64 `json:"amount"`
 	Currency string  `json:"currency"`
 }
+
+type PaymentEventPayed struct {
+	TripID   string `json:"tripID"`
+	UserID   string `json:"userID"`
+	DriverID string `json:"driverID"`
+}
