@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type Service interface {
+type PaymentService interface {
 	CreatePaymentSession(
 		ctx context.Context,
 		tripID, userID, driverID string,
