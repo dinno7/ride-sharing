@@ -55,3 +55,18 @@ type DriverResponseToTripData struct {
 		CarPlate       string           `json:"carPlate"`
 	} `json:"driver"`
 }
+
+type PaymentEventSessionCreatedData struct {
+	TripID    string  `json:"tripID"`
+	SessionID string  `json:"sessionID"`
+	Amount    float64 `json:"amount"`
+	Currency  string  `json:"currency"`
+}
+
+type PaymentCmdCreateSessionData struct {
+	TripID   string  `json:"tripID"`
+	UserID   string  `json:"userID"`
+	DriverID string  `json:"driverID"`
+	Amount   float64 `json:"amount"`
+	Currency string  `json:"currency"`
+}
