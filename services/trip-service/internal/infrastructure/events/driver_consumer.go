@@ -54,7 +54,21 @@ func (h *DriverConsumerHandler) Handle(ctx context.Context, message *amqp091.Del
 			return err
 		}
 
-		// TODO: Notify payment service to start payment link
+		// INFO: Notify payment service to start payment link
+		if err := h.messagePublisher.PublishCommand(
+			ctx,
+			contracts.PaymentCmdCreateSession,
+			trip.UserID,
+			contracts.PaymentCmdCreateSessionData{
+				TripID:   trip.ID,
+				UserID:   trip.UserID,
+				DriverID: payload.Data.Driver.Id,
+				Amount:   trip.RideFare.TotalPriceInCents,
+				Currency: "USD",
+			},
+		); err != nil {
+			return err
+		}
 	case contracts.DriverCmdTripDecline:
 		trip, err := h.tripService.GetTripByID(ctx, payload.Data.TripID)
 		if err != nil {
