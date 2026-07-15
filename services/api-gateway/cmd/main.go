@@ -65,6 +65,7 @@ func main() {
 		DriverCmdTripRequestQueue,
 		NotifyNoDriversFoundQueue,
 		NotifyDriverAssignedQueue,
+		NotifyPaymentSessionCreatedQueue,
 	}
 	for _, queueName := range consumeAndForwardQueues {
 		if err = consumer.Consume(
